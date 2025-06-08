@@ -34,6 +34,7 @@ class ContactDetailViewModel extends ChangeNotifier {
       _contact = await _getContactUseCase(contactId);
       _errorMessage = null;
     } catch (e) {
+      print(e);
       _errorMessage = e.toString();
       _contact = null;
     } finally {
@@ -50,6 +51,7 @@ class ContactDetailViewModel extends ChangeNotifier {
       _contact = _contact!.copyWith(isFavorite: !_contact!.isFavorite);
       notifyListeners();
     } catch (e) {
+       print(e);
       _errorMessage = e.toString();
       notifyListeners();
     }
@@ -63,6 +65,7 @@ class ContactDetailViewModel extends ChangeNotifier {
       _contact = null;
       notifyListeners();
     } catch (e) {
+       print(e);
       _errorMessage = e.toString();
       notifyListeners();
     }
