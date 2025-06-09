@@ -234,17 +234,29 @@ class _ContactsScreenState extends State<ContactsScreen> {
           ),
           
           // Enhanced Search Bar with smooth animations
+          // SliverPersistentHeader(
+          //   pinned: true,
+          //   delegate: _SearchBarDelegate(
+          //     searchController: _searchController,
+          //     onChanged: (query) {
+          //       context.read<ContactsViewModel>().setSearchQuery(query);
+          //     },
+          //     isVisible: true,
+          //   ),
+          // ),
           SliverPersistentHeader(
-            pinned: true,
-            delegate: _SearchBarDelegate(
-              searchController: _searchController,
-              onChanged: (query) {
-                context.read<ContactsViewModel>().setSearchQuery(query);
-              },
-              isVisible: true,
-            ),
-          ),
-          
+  pinned: true,
+  delegate: _SearchBarDelegate(
+    //  key: ValueKey(Theme.of(context).brightness), // <– triggers rebuild on theme change
+    searchController: _searchController,
+    onChanged: (query) {
+      context.read<ContactsViewModel>().setSearchQuery(query);
+    },
+    isVisible: true,
+    theme: Theme.of(context),
+  ),
+),
+
           // Contact Statistics Card
           Consumer<ContactsViewModel>(
             builder: (context, viewModel, child) {
@@ -543,22 +555,23 @@ class _StatItem extends StatelessWidget {
     );
   }
 }
-
 class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
   final SearchController searchController;
   final ValueChanged<String> onChanged;
   final bool isVisible;
+  final ThemeData theme;
 
   _SearchBarDelegate({
     required this.searchController,
     required this.onChanged,
     required this.isVisible,
+    required this.theme,
   });
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
+    final colorScheme = theme.colorScheme;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       transform: Matrix4.translationValues(0, isVisible ? 0 : -56, 0),
@@ -610,9 +623,11 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(covariant _SearchBarDelegate oldDelegate) {
     return searchController != oldDelegate.searchController ||
-           isVisible != oldDelegate.isVisible;
+           isVisible != oldDelegate.isVisible ||
+           theme.brightness != oldDelegate.theme.brightness;
   }
 }
+
 
 class _PatternPainter extends CustomPainter {
   final Color color;
